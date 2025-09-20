@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pro.sky.telegrambot.model.NotificationTask;
 import pro.sky.telegrambot.service.ReminderService;
 import pro.sky.telegrambot.service.TelegramBotService;
 
@@ -60,7 +61,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             handleHelpCommand(chatId);
                             break;
                         default:
-                            handleReminder(chatId, text);
+                            handleNotification(chatId, text);
                     }
                 } catch (Exception e) {
                     logger.error("Error processing update: {}", update, e);
@@ -108,31 +109,31 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private void handleMyRemindersCommand(Long chatId) {
         logger.info("Handling /my_reminders command for chatId: {}", chatId);
 
-        List<pro.sky.telegrambot.model.Reminder> reminders = reminderService.getUserReminders(chatId);
+        List<NotificationTask> notifications = reminderService.getUserNotifications(chatId);
 
-        if (reminders.isEmpty()) {
+        if (notifications.isEmpty()) {
             telegramBotService.sendMessage(chatId, "📭 У вас нет активных напоминаний.");
             return;
         }
 
         StringBuilder message = new StringBuilder("📋 Ваши активные напоминания:\n\n");
-        for (int i = 0; i < reminders.size(); i++) {
-            pro.sky.telegrambot.model.Reminder reminder = reminders.get(i);
+        for (int i = 0; i < notifications.size(); i++) {
+            NotificationTask notification = notifications.get(i);
             message.append(i + 1)
                     .append(". ")
-                    .append(reminder.getReminderDate().format(FORMATTER))
+                    .append(notification.getNotificationDate().format(FORMATTER))
                     .append(" - ")
-                    .append(reminder.getReminderText())
+                    .append(notification.getMessageText())
                     .append("\n");
         }
 
         telegramBotService.sendMessage(chatId, message.toString());
     }
 
-    private void handleReminder(Long chatId, String text) {
-        logger.info("Handling reminder for chatId: {}, text: {}", chatId, text);
+    private void handleNotification(Long chatId, String text) {
+        logger.info("Handling notification for chatId: {}, text: {}", chatId, text);
 
-        boolean success = reminderService.parseAndSaveReminder(chatId, text);
+        boolean success = reminderService.parseAndSaveNotification(chatId, text);
 
         if (success) {
             telegramBotService.sendMessage(chatId, "✅ Напоминание успешно добавлено!");
