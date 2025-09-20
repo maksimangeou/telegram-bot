@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pro.sky.telegrambot.model.Reminder;
 import pro.sky.telegrambot.service.ReminderService;
 import pro.sky.telegrambot.service.TelegramBotService;
 
@@ -109,7 +108,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private void handleMyRemindersCommand(Long chatId) {
         logger.info("Handling /my_reminders command for chatId: {}", chatId);
 
-        List<Reminder> reminders = reminderService.getUserReminders(chatId);
+        List<pro.sky.telegrambot.model.Reminder> reminders = reminderService.getUserReminders(chatId);
 
         if (reminders.isEmpty()) {
             telegramBotService.sendMessage(chatId, "📭 У вас нет активных напоминаний.");
@@ -118,7 +117,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         StringBuilder message = new StringBuilder("📋 Ваши активные напоминания:\n\n");
         for (int i = 0; i < reminders.size(); i++) {
-            Reminder reminder = reminders.get(i);
+            pro.sky.telegrambot.model.Reminder reminder = reminders.get(i);
             message.append(i + 1)
                     .append(". ")
                     .append(reminder.getReminderDate().format(FORMATTER))
