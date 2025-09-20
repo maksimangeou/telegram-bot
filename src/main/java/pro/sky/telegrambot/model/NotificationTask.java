@@ -26,7 +26,6 @@ public class NotificationTask {
     @Column(name = "sent")
     private Boolean sent = false;
 
-    // Конструкторы
     public NotificationTask() {
     }
 
@@ -36,7 +35,6 @@ public class NotificationTask {
         this.notificationDate = notificationDate;
     }
 
-    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }

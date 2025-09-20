@@ -37,7 +37,6 @@ public class ReminderService {
             try {
                 LocalDateTime notificationDate = LocalDateTime.parse(dateTimeStr, DATE_FORMATTER);
 
-                // Проверка что дата в будущем
                 if (notificationDate.isBefore(LocalDateTime.now())) {
                     return false;
                 }
@@ -56,7 +55,7 @@ public class ReminderService {
         return notificationTaskRepository.findActiveNotificationsByChatId(chatId);
     }
 
-    @Scheduled(cron = "0 * * * * *") // Каждую минуту в 00 секунд
+    @Scheduled(cron = "0 * * * * *")
     public void checkAndSendNotifications() {
         LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
         List<NotificationTask> dueNotifications = notificationTaskRepository.findDueNotifications(now);
